@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Latihan Soal Matematika Dasar</title>
+  <meta name="description" content="Latihan soal matematika dasar nomor 1 sampai 25 dengan umpan balik langsung.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f46e5'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3E%CF%80%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- LOGIN -->
+  <main id="view-login" class="view center" hidden>
+    <form id="login-form" class="card narrow" autocomplete="off">
+      <div class="logo" aria-hidden="true">π</div>
+      <h1>Latihan Soal Matematika Dasar</h1>
+      <p class="muted">25 soal, jawaban langsung diperiksa. Masuk dengan nama kamu. Kalau masuk lagi dengan nama yang sama, pengerjaanmu dilanjutkan.</p>
+      <label for="in-name">Nama</label>
+      <input id="in-name" name="name" type="text" maxlength="40" placeholder="Ketik namamu" required autofocus>
+      <div id="pin-row" hidden>
+        <label for="in-pin">PIN guru</label>
+        <input id="in-pin" name="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN">
+      </div>
+      <p id="login-error" class="error" role="alert" hidden></p>
+      <button class="btn primary block" type="submit" id="btn-login">Masuk</button>
+    </form>
+  </main>
+
+  <!-- MENUNGGU -->
+  <main id="view-wait" class="view center" hidden>
+    <section class="card narrow center-text">
+      <div class="pulse" aria-hidden="true"></div>
+      <h2 id="wait-title">Menunggu guru</h2>
+      <p id="wait-text" class="muted"></p>
+      <p class="muted small">Halaman ini terbuka sendiri begitu sesi aktif.</p>
+      <button class="btn ghost" data-action="logout" type="button">Keluar</button>
+    </section>
+  </main>
+
+  <!-- SISWA: SOAL -->
+  <div id="view-quiz" class="view" hidden>
+    <header class="topbar">
+      <div class="who"><span class="avatar" id="q-avatar" aria-hidden="true"></span><span id="q-name"></span></div>
+      <div class="topbar-right">
+        <span class="chip" id="q-score">Benar 0</span>
+        <button class="btn ghost small" data-action="logout" type="button">Keluar</button>
+      </div>
+    </header>
+    <div class="wrap">
+      <div class="progress" aria-hidden="true"><span id="q-bar"></span></div>
+      <p class="muted small" id="q-count"></p>
+      <article class="card" id="q-card">
+        <p class="qtext" id="q-text"></p>
+        <img id="q-img" class="qimg" alt="Gambar untuk soal ini" hidden>
+        <div id="q-options" class="options" role="group" aria-label="Pilihan jawaban"></div>
+        <div id="q-feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+        <button id="q-next" class="btn primary block" type="button" hidden>Lanjut</button>
+      </article>
+    </div>
+    <div id="overlay" class="overlay" hidden>
+      <div class="card narrow center-text">
+        <div class="pulse" aria-hidden="true"></div>
+        <h2 id="overlay-title">Dijeda oleh guru</h2>
+        <p id="overlay-text" class="muted"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SISWA: HASIL -->
+  <main id="view-result" class="view center" hidden>
+    <section class="card narrow center-text">
+      <div class="logo" aria-hidden="true">✓</div>
+      <h2>Selesai, <span id="r-name"></span>!</h2>
+      <p class="score"><span id="r-correct">0</span><small> / <span id="r-total">25</span></small></p>
+      <p class="muted" id="r-percent"></p>
+      <div id="r-grid" class="grid result-grid" aria-label="Ringkasan per soal"></div>
+      <button class="btn ghost" data-action="logout" type="button">Keluar</button>
+    </section>
+  </main>
+
+  <!-- GURU -->
+  <div id="view-teacher" class="view" hidden>
+    <header class="topbar">
+      <div class="who"><span class="avatar" aria-hidden="true">F</span><span>Mode Guru</span></div>
+      <div class="topbar-right">
+        <span class="chip" id="t-status">...</span>
+        <button class="btn ghost small" data-action="logout" type="button">Keluar</button>
+      </div>
+    </header>
+    <div class="wrap wide">
+      <section class="card controls" aria-label="Kontrol sesi">
+        <div class="controls-info">
+          <strong>Sesi siswa</strong>
+          <span class="muted small" id="t-info"></span>
+        </div>
+        <div class="controls-btns">
+          <button class="btn primary" id="t-start" type="button">Mulai Baru</button>
+          <button class="btn" id="t-pause" type="button">Pause</button>
+          <button class="btn" id="t-resume" type="button">Lanjutkan</button>
+          <button class="btn danger" id="t-stop" type="button">Matikan</button>
+        </div>
+      </section>
+
+      <nav class="tabs" role="tablist">
+        <button role="tab" class="tab active" id="tab-bahas" aria-selected="true" data-tab="bahas" type="button">Soal dan pembahasan</button>
+        <button role="tab" class="tab" id="tab-peserta" aria-selected="false" data-tab="peserta" type="button">Peserta <span class="badge" id="t-count">0</span></button>
+      </nav>
+
+      <section id="panel-bahas">
+        <div id="t-grid" class="grid nav-grid" aria-label="Pilih nomor soal"></div>
+        <article class="card" id="t-card">
+          <p class="muted small" id="t-qno"></p>
+          <p class="qtext" id="t-qtext"></p>
+          <img id="t-qimg" class="qimg" alt="Gambar untuk soal ini" hidden>
+          <div id="t-options" class="options static"></div>
+          <div class="answerbox"><strong>Jawaban: <span id="t-answer"></span></strong></div>
+          <h3>Pembahasan</h3>
+          <img id="t-eimg" class="qimg" alt="Gambar pembahasan" hidden>
+          <div id="t-explain" class="explain"></div>
+          <div class="pager">
+            <button class="btn" id="t-prev" type="button">← Sebelumnya</button>
+            <button class="btn primary" id="t-next" type="button">Berikutnya →</button>
+          </div>
+        </article>
+      </section>
+
+      <section id="panel-peserta" hidden>
+        <article class="card">
+          <p id="t-roster-empty" class="muted" hidden>Belum ada siswa yang masuk pada sesi ini.</p>
+          <div class="table-wrap">
+            <table class="roster" id="t-roster" hidden>
+              <thead><tr><th>Nama</th><th>Terjawab</th><th>Benar</th><th>Terakhir aktif</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: same-origin
+/api/*
+  Cache-Control: no-store
+/img/*
+  Cache-Control: public, max-age=86400

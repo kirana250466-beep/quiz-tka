@@ -1,0 +1,10 @@
+{
+  "name": "quiz-matematika-dasar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Quiz matematika dasar (25 soal) untuk Cloudflare Pages, Functions, dan D1",
+  "scripts": {
+    "dev": "npx wrangler pages dev public --d1=DB --port 8788",
+    "deploy": "npx wrangler pages deploy public --project-name quiz-matematika-dasar"
+  }
+}
